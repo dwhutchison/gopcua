@@ -49,13 +49,36 @@ func main() {
 	
 	// StatusCode describes the UA Status Codes as defined in Part 6 A.2
 	type StatusCode struct {
-		Code        uint32
-		Description string
+		code        uint32
+		description string
 	}
-	
+
+	// New instantiates a new StatusCode object
+	func New(code uint32, description string) (*StatusCode) {
+		return &StatusCode{
+			code: code,
+			description: description, 
+		}
+	}	
+
 	// Error implements the error interface on StatusCode
 	func (s *StatusCode) Error() string {
-		return fmt.Sprintf("0x%X: %s", s.Code, s.Description)
+		return s.String()
+	}
+	
+	// String implements the stringer interface on StatusCode
+	func (s *StatusCode) String() string {
+		return fmt.Sprintf("0x%X: %s", s.code, s.description)
+	}
+
+	// Code returns the error code from a StatusCode object
+	func (s *StatusCode) Code() uint32 {
+		return s.code
+	}
+
+	// Description returns the error code from a StatusCode object
+	func (s *StatusCode) Description() string {
+		return s.description
 	}
 	
 	// StatusCode definitions from http://www.opcfoundation.org/UA/schemas/1.04/StatusCode.csv
@@ -79,7 +102,7 @@ func main() {
 			}
 			panic(err)
 		}
-		b.WriteString(fmt.Sprintf("%s = StatusCode{Code: %s, Description: %q}\n", record[0], record[1], record[2]))
+		b.WriteString(fmt.Sprintf("%s = StatusCode{code: %s, description: %q}\n", record[0], record[1], record[2]))
 	}
 
 	// close var(...) bracket
