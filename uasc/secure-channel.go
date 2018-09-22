@@ -328,14 +328,14 @@ func (s *SecureChannel) handleOpenSecureChannelRequest(o *services.OpenSecureCha
 			s.updateState(srvStateSecureChannelOpened)
 		// respond with BadSecurityModeRejected and notify server
 		default:
-			if err := s.OpenSecureChannelResponse(status.BadSecurityModeRejected, 0, 0xffff, nil); err != nil {
+			if err := s.OpenSecureChannelResponse(status.BadSecurityModeRejected.Code, 0, 0xffff, nil); err != nil {
 				s.errChan <- err
 			}
 			s.errChan <- ErrSecurityModeUnsupported
 		}
 	// if SecureChannel is already opened, respond with BadAlreadyExists.
 	case srvStateSecureChannelOpened, srvStateCloseSecureChannelSent:
-		if err := s.OpenSecureChannelResponse(status.BadAlreadyExists, 0, 0xffff, nil); err != nil {
+		if err := s.OpenSecureChannelResponse(status.BadAlreadyExists.Code, 0, 0xffff, nil); err != nil {
 			s.errChan <- err
 		}
 	// client never accept OpenSecureChannelRequest, just ignore it.
@@ -355,7 +355,7 @@ func (s *SecureChannel) handleOpenSecureChannelResponse(o *services.OpenSecureCh
 			s.cfg.SecureChannelID = o.SecurityToken.ChannelID
 			s.cfg.SecurityTokenID = o.SecurityToken.TokenID
 			s.updateState(cliStateSecureChannelOpened)
-		case status.BadSecurityModeRejected:
+		case status.BadSecurityModeRejected.Code:
 			s.errChan <- ErrRejected
 			s.updateState(cliStateSecureChannelClosed)
 		}
